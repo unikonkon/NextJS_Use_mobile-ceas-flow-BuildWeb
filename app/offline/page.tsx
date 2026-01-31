@@ -46,7 +46,7 @@ export default function OfflinePage() {
         {/* App Info */}
         <div className="mt-12 flex items-center gap-2 text-xs text-muted-foreground/60">
           <span className="text-xl">📒</span>
-          <span>CEAS Flow</span>
+            <span>Pay Flow</span>
         </div>
       </div>
     </div>

@@ -14,13 +14,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CEAS Flow - บันทึกรายรับรายจ่าย",
+  title: "Pay Flow - บันทึกรายรับรายจ่าย",
   description: "แอปบันทึกรายรับรายจ่ายที่ใช้งานง่าย ติดตามการเงินของคุณ",
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "CEAS Flow",
+    title: "Pay Flow",
   },
   icons: {
     icon: [
@@ -65,7 +65,7 @@ export default function RootLayout({
         {/* Critical iOS PWA meta tags - must be in <head> for iOS Safari */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="CEAS Flow" />
+        <meta name="apple-mobile-web-app-title" content="Pay Flow" />
 
         {/* Apple Touch Icons for all iOS devices */}
         <link rel="apple-touch-icon" href="/icons/icon-180x180.png" />

@@ -1,6 +1,6 @@
 {
-  "name": "CEAS Flow - บันทึกรายรับรายจ่าย",
-  "short_name": "CEAS Flow",
+  "name": "Pay Flow - บันทึกรายรับรายจ่าย",
+  "short_name": "Pay Flow",
   "description": "แอปบันทึกรายรับรายจ่ายที่ใช้งานง่าย ติดตามการเงินของคุณ",
   "start_url": "/",
   "display": "standalone",
