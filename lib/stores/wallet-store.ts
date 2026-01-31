@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Wallet } from '@/types';
 import { db, toStoredWallet, fromStoredWallet } from './db';
-import { mockWallets } from '@/lib/mock/data';
+// import { mockWallets } from '@/lib/mock/data';
 
 // ============================================
 // Store Interface
@@ -40,11 +40,11 @@ export const useWalletStore = create<WalletStore>((set, get) => ({
       const storedWallets = await db.wallets.toArray();
 
       if (storedWallets.length === 0) {
-        // Seed with mock data on first run
-        await db.wallets.bulkPut(mockWallets.map(toStoredWallet));
+        // Mock data seeding disabled - start with empty wallets
+        // await db.wallets.bulkPut(mockWallets.map(toStoredWallet));
 
         set({
-          wallets: mockWallets,
+          wallets: [],
           isLoading: false,
           isInitialized: true,
         });

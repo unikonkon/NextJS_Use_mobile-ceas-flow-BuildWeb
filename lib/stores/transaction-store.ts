@@ -8,7 +8,7 @@ import {
 import { db, toStoredTransaction, fromStoredTransaction } from './db';
 import { useCategoryStore } from './category-store';
 import { useAnalysisStore } from './analysis-store';
-import { mockTransactions } from '@/lib/mock/data';
+// import { mockTransactions } from '@/lib/mock/data';
 
 // ============================================
 // Helper Functions
@@ -248,40 +248,38 @@ export const useTransactionStore = create<TransactionStore>((set, get) => ({
         .toArray();
 
       if (storedTransactions.length === 0) {
-        // Seed with mock data on first run
-        const baseTransactions = mockTransactions.map((t) => ({
-          id: t.id,
-          walletId: t.walletId,
-          categoryId: t.categoryId,
-          type: t.type,
-          amount: t.amount,
-          currency: t.currency,
-          date: t.date,
-          note: t.note,
-          createdAt: t.createdAt,
-          updatedAt: t.updatedAt,
-        }));
-
-        // Store to IndexedDB
-        await db.transactions.bulkPut(
-          baseTransactions.map(toStoredTransaction)
-        );
-
-        // Build TransactionWithCategory using category store
-        const transactionsWithCategory: TransactionWithCategory[] = mockTransactions.map((t) => {
-          const category = categoryStore.getCategoryById(t.categoryId);
-          return {
-            ...t,
-            category: category || t.category,
-          };
-        });
+        // Mock data seeding disabled - start with empty transactions
+        // const baseTransactions = mockTransactions.map((t) => ({
+        //   id: t.id,
+        //   walletId: t.walletId,
+        //   categoryId: t.categoryId,
+        //   type: t.type,
+        //   amount: t.amount,
+        //   currency: t.currency,
+        //   date: t.date,
+        //   note: t.note,
+        //   createdAt: t.createdAt,
+        //   updatedAt: t.updatedAt,
+        // }));
+        //
+        // await db.transactions.bulkPut(
+        //   baseTransactions.map(toStoredTransaction)
+        // );
+        //
+        // const transactionsWithCategory: TransactionWithCategory[] = mockTransactions.map((t) => {
+        //   const category = categoryStore.getCategoryById(t.categoryId);
+        //   return {
+        //     ...t,
+        //     category: category || t.category,
+        //   };
+        // });
 
         const { selectedMonth, selectedDay, selectedWalletId } = get();
         set({
-          transactions: transactionsWithCategory,
-          dailySummaries: computeDailySummaries(transactionsWithCategory, selectedMonth, selectedDay, selectedWalletId),
-          monthlySummary: computeMonthlySummary(transactionsWithCategory, selectedMonth, selectedWalletId),
-          walletBalances: computeWalletBalances(transactionsWithCategory),
+          transactions: [],
+          dailySummaries: computeDailySummaries([], selectedMonth, selectedDay, selectedWalletId),
+          monthlySummary: computeMonthlySummary([], selectedMonth, selectedWalletId),
+          walletBalances: computeWalletBalances([]),
           isLoading: false,
           isInitialized: true,
         });
