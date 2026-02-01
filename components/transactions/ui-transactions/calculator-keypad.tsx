@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { CalcButton } from './calc-button';
 import type { Operation } from './use-calculator';
 import type { TransactionType } from '@/types';
-import { Check, Sparkles, Plus } from 'lucide-react';
+import { Check, Sparkles } from 'lucide-react';
 
 interface CalculatorKeypadProps {
   operation: Operation;
@@ -17,8 +17,6 @@ interface CalculatorKeypadProps {
   onBackspace: () => void;
   onSubmit: () => void;
   showSparkle?: boolean;
-  hasWallet?: boolean;
-  onCreateWallet?: () => void;
 }
 
 export function CalculatorKeypad({
@@ -32,8 +30,6 @@ export function CalculatorKeypad({
   onBackspace,
   onSubmit,
   showSparkle = true,
-  hasWallet = true,
-  onCreateWallet,
 }: CalculatorKeypadProps) {
   return (
     <div className="mt-auto bg-muted/30 px-3 pb-safe pt-3">
@@ -91,40 +87,26 @@ export function CalculatorKeypad({
         <CalcButton label="00" onClick={() => { onNumber('0'); onNumber('0'); }} />
         <CalcButton label="0" onClick={() => onNumber('0')} />
         {/* Submit Button */}
-        {!hasWallet && onCreateWallet ? (
-          <button
-            onClick={onCreateWallet}
-            className={cn(
-              "col-span-2 relative flex h-12 items-center justify-center gap-2 rounded-xl font-semibold text-white transition-all duration-300",
-              "active:scale-95 shadow-lg",
-              "bg-primary shadow-primary/30 hover:bg-primary/90"
-            )}
-          >
-            <Plus className="size-5" />
-            <span className="text-sm">สร้างกระเป๋าเงิน</span>
-          </button>
-        ) : (
-          <button
-            onClick={onSubmit}
-            disabled={!canSubmit}
-            className={cn(
-              "col-span-2 relative flex h-12 items-center justify-center gap-2 rounded-xl font-semibold text-white transition-all duration-300",
-              "active:scale-95 disabled:opacity-40 disabled:active:scale-100",
-              canSubmit && "shadow-lg",
-              transactionType === 'expense' && "bg-expense shadow-expense/30 hover:bg-expense/90",
-              transactionType === 'income' && "bg-income shadow-income/30 hover:bg-income/90"
-            )}
-          >
-            {canSubmit ? (
-              <>
-                <Check className="size-5" />
-                <span className="text-sm">บันทึก</span>
-              </>
-            ) : (
+        <button
+          onClick={onSubmit}
+          disabled={!canSubmit}
+          className={cn(
+            "col-span-2 relative flex h-12 items-center justify-center gap-2 rounded-xl font-semibold text-white transition-all duration-300",
+            "active:scale-95 disabled:opacity-40 disabled:active:scale-100",
+            canSubmit && "shadow-lg",
+            transactionType === 'expense' && "bg-expense shadow-expense/30 hover:bg-expense/90",
+            transactionType === 'income' && "bg-income shadow-income/30 hover:bg-income/90"
+          )}
+        >
+          {canSubmit ? (
+            <>
+              <Check className="size-5" />
               <span className="text-sm">บันทึก</span>
-            )}
-          </button>
-        )}
+            </>
+          ) : (
+            <span className="text-sm">บันทึก</span>
+          )}
+        </button>
       </div>
     </div>
   );

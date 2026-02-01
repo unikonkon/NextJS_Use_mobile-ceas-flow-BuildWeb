@@ -11,7 +11,7 @@ export default function MainPage() {
   const renderTabContent = () => {
     switch (activeTab) {
       case 'home':
-        return <HomeTab />;
+        return <HomeTab onCreateWallet={() => handleTabChange('wallets')} />;
       case 'analytics':
         return <AnalyticsTab subTab={analyticsSubTab} onSubTabChange={setAnalyticsSubTab} />;
       case 'ai-analysis':
@@ -19,7 +19,7 @@ export default function MainPage() {
       case 'more':
         return <MoreTab />;
       default:
-        return <HomeTab />;
+        return <HomeTab onCreateWallet={() => handleTabChange('wallets')} />;
     }
   };
 

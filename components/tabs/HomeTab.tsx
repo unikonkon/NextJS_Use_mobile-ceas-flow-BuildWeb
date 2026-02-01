@@ -1,14 +1,20 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { Plus } from 'lucide-react';
 import { Header, PageContainer } from '@/components/layout';
 import { SummaryBar, TransactionList, EditTransactionSheet } from '@/components/transactions';
 import { MonthPicker, WalletSelector } from '@/components/common';
 import { AlertBanner } from '@/components/ui/alert-banner';
+import { cn } from '@/lib/utils';
 import { useTransactionStore, useCategoryStore, useWalletStore, useAlertSettingsStore } from '@/lib/stores';
 import { TransactionWithCategory } from '@/types';
 
-export function HomeTab() {
+interface HomeTabProps {
+  onCreateWallet?: () => void;
+}
+
+export function HomeTab({ onCreateWallet }: HomeTabProps) {
   // Edit sheet state
   const [editingTransaction, setEditingTransaction] = useState<TransactionWithCategory | null>(null);
   const [editSheetOpen, setEditSheetOpen] = useState(false);
@@ -193,11 +199,35 @@ export function HomeTab() {
         )}
 
         {/* Transaction List */}
-        <TransactionList
-          dailySummaries={dailySummaries}
-          onTransactionClick={handleTransactionClick}
-          newTransactionIds={newTransactionIds}
-        />
+        {walletInitialized && wallets.length === 0 ? (
+          <div className="flex flex-col items-center justify-center gap-4 py-16 text-center">
+            <div className="flex size-34 items-center justify-center rounded-3xl bg-muted/50 text-8xl">
+              💰
+            </div>
+            <div className="flex flex-col gap-1">
+              <h3 className="text-lg font-semibold text-foreground">ยังไม่มีกระเป๋าเงิน</h3>
+              <p className="max-w-xs text-sm text-muted-foreground">สร้างกระเป๋าเงินเพื่อเริ่มบันทึกรายรับรายจ่าย</p>
+            </div>
+            <button
+              onClick={onCreateWallet}
+              className={cn(
+                "col-span-2 relative flex h-12 items-center justify-center gap-2 rounded-xl font-semibold text-white transition-all duration-300",
+                "active:scale-95 shadow-lg",
+                "bg-primary shadow-primary/30 hover:bg-primary/90"
+              )}
+              style={{ minWidth: '200px' }}
+            >
+              <Plus className="size-5" />
+              <span className="text-sm">สร้างกระเป๋าเงิน</span>
+            </button>
+          </div>
+        ) : (
+          <TransactionList
+            dailySummaries={dailySummaries}
+            onTransactionClick={handleTransactionClick}
+            newTransactionIds={newTransactionIds}
+          />
+        )}
       </PageContainer>
 
       {/* Edit Transaction Sheet */}

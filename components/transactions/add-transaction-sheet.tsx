@@ -356,8 +356,6 @@ export function AddTransactionSheet({
               onBackspace={calculator.handleBackspace}
               onSubmit={handleSubmit}
               showSparkle={true}
-              hasWallet={hasWallet}
-              onCreateWallet={onCreateWallet}
             />
           )}
         </div>

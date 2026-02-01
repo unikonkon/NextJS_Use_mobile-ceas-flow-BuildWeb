@@ -114,12 +114,16 @@ interface FullResult {
 interface AiResponse {
   type: 'structured' | 'full' | 'text';
   data: StructuredResult | FullResult | string;
+  remaining?: number;
 }
 
 const PROMPT_OPTIONS: { value: PromptType; label: string; desc: string }[] = [
   { value: 'structured', label: 'วิเคราะห์เชิงลึก', desc: 'ผลลัพธ์แบบสั้น' },
   { value: 'full', label: 'วิเคราะห์เชิงลึก (แบบละเอียด)', desc: 'ผลลัพธ์แบบละเอียด รายละเอียดทุกหัวข้อ' },
 ];
+
+/** จำนวนครั้งที่ยิง API ได้ต่อวัน (จาก env NEXT_PUBLIC_AI_DAILY_LIMIT) */
+const AI_DAILY_LIMIT = Math.max(1, Number(process.env.NEXT_PUBLIC_AI_DAILY_LIMIT) || 2);
 
 export function UseAiAnalysisTab() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -128,6 +132,7 @@ export function UseAiAnalysisTab() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<AiResponse | null>(null);
+  const [remainingToday, setRemainingToday] = useState<number | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
   const [showHistory, setShowHistory] = useState(false);
 
@@ -277,21 +282,25 @@ export function UseAiAnalysisTab() {
         body: JSON.stringify({ financialData, promptType }),
       });
 
+      const data = await res.json().catch(() => null);
+
       if (!res.ok) {
-        const errData = await res.json().catch(() => null);
-        throw new Error(errData?.error || `HTTP ${res.status}`);
+        const message = data?.error || `HTTP ${res.status}`;
+        throw new Error(message);
       }
 
-      const data: AiResponse = await res.json();
-      setResult(data);
+      setResult(data as AiResponse);
+      if (typeof data?.remaining === 'number') {
+        setRemainingToday(data.remaining);
+      }
 
       // Save to AI history store
       await addAiHistory({
         walletId: selectedWalletId,
         promptType,
         year: selectedYear,
-        responseType: data.type,
-        responseData: data.data,
+        responseType: (data as AiResponse).type,
+        responseData: (data as AiResponse).data,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'เกิดข้อผิดพลาด');
@@ -315,6 +324,7 @@ export function UseAiAnalysisTab() {
   return (
     <>
       <Header
+        title=""
         leftAction={
           <WalletSelector
             wallets={wallets}
@@ -412,6 +422,16 @@ export function UseAiAnalysisTab() {
               </div>
             </div>
 
+            {/* Rate limit info: ใน 1 วัน ยิงใช้ API ได้ X ครั้งเท่านั้น */}
+            <p className="mb-2 text-[10px] text-muted-foreground text-center">
+              ใน 1 วัน ใช้วิเคราะห์ได้ {AI_DAILY_LIMIT} ครั้งเท่านั้น
+              {remainingToday !== null && (
+                <span className="ml-1.5 text-primary font-medium">
+                  · ใช้ได้อีก {remainingToday} ครั้งวันนี้
+                </span>
+              )}
+            </p>
+
             {/* Action Buttons */}
             <div className="mb-4 flex gap-2">
               <button
@@ -429,7 +449,7 @@ export function UseAiAnalysisTab() {
                 )}
                 {loading ? 'กำลังวิเคราะห์...' : 'วิเคราะห์ด้วย AI'}
               </button>
-              <button
+              {/* <button
                 onClick={handleExportText}
                 className={cn(
                   'flex items-center justify-center gap-2 rounded-xl border border-border',
@@ -439,7 +459,7 @@ export function UseAiAnalysisTab() {
               >
                 <Download className="size-3.5" />
                 Export .txt
-              </button>
+              </button> */}
             </div>
 
             {/* Error */}
@@ -884,7 +904,6 @@ function StructuredResultView({
       : data.summary.healthScore === 'ปานกลาง'
         ? 'text-yellow-500'
         : 'text-expense';
-
   return (
     <div className="space-y-3">
       {/* Health Score */}
@@ -1219,10 +1238,18 @@ function AiHistoryView({ onBack, wallets }: { onBack: () => void; wallets: Walle
 
               return (
                 <div key={record.id} className="rounded-xl bg-muted/40 overflow-hidden">
-                  {/* Card Header */}
-                  <button
+                  {/* Card Header: use div + role="button" to avoid nesting a button (delete) inside a button */}
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setExpandedId(isExpanded ? null : record.id)}
-                    className="flex w-full items-center justify-between p-3"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        setExpandedId(isExpanded ? null : record.id);
+                      }
+                    }}
+                    className="flex w-full cursor-pointer items-center justify-between p-3"
                   >
                     <div className="flex flex-col items-start gap-0.5">
                       <div className="flex items-center gap-2">
@@ -1239,12 +1266,10 @@ function AiHistoryView({ onBack, wallets }: { onBack: () => void; wallets: Walle
                         <span>{formatDate(record.createdAt)}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteHistory(record.id);
-                        }}
+                        type="button"
+                        onClick={() => deleteHistory(record.id)}
                         className="rounded-lg p-1.5 text-muted-foreground hover:text-expense hover:bg-expense/10 transition-colors"
                       >
                         <Trash2 className="size-3.5" />
@@ -1255,7 +1280,7 @@ function AiHistoryView({ onBack, wallets }: { onBack: () => void; wallets: Walle
                         <ChevronDown className="size-4 text-muted-foreground" />
                       )}
                     </div>
-                  </button>
+                  </div>
 
                   {/* Expanded Content */}
                   {isExpanded && parsedData && (
