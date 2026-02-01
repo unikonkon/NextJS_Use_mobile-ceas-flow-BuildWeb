@@ -172,13 +172,13 @@ export function MoreTab() {
       <Header title="การตั้งค่า" />
 
       <PageContainer className="my-4">
-        <div className="flex flex-col pt-3">
+        {/* <div className="flex flex-col pt-3">
           <SettingsMenuItem
             icon={<User className="size-5" />}
             title="บัญชี"
             onClick={handleAccountClick}
           />
-        </div>
+        </div> */}
 
         <div className="flex flex-col pt-3">
           <SettingsMenuItem
