@@ -155,7 +155,7 @@ export function FrequentTransactions({
           {/* Basic Matches Section */}
           {basicMatches.length > 0 && (
             <div>
-              <div className="flex items-center gap-1 mb-1.5 px-1">
+              {/* <div className="flex items-center gap-1 mb-1.5 px-1">
                 <span className="text-[10px] font-medium text-muted-foreground">
                   เลือกใช้ซ้ำ หมวดหมู่ + จำนวนเงิน
                 </span>
@@ -169,7 +169,7 @@ export function FrequentTransactions({
                 >
                   {basicMatches.length}
                 </span>
-              </div>
+              </div> */}
               <div className="grid grid-cols-4 gap-1">
                 {basicMatches.map((analysis) => (
                   <FrequentItem
@@ -186,7 +186,7 @@ export function FrequentTransactions({
           {/* Full Matches Section */}
           {fullMatches.length > 0 && (
             <div>
-              <div className="flex items-center gap-1 mb-1.5 px-1">
+              {/* <div className="flex items-center gap-1 mb-1.5 px-1">
                 <span className="text-[10px] font-medium text-muted-foreground">
                   เลือกใช้ซ้ำ หมวดหมู่ + จำนวนเงิน + บันทึก
                 </span>
@@ -200,7 +200,7 @@ export function FrequentTransactions({
                 >
                   {fullMatches.length}
                 </span>
-              </div>
+              </div> */}
               <div className="grid grid-cols-4 gap-1">
                 {fullMatches.map((analysis) => (
                   <FrequentItem

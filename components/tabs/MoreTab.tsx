@@ -3,10 +3,10 @@
 import { useState } from 'react';
 import { Header, PageContainer } from '@/components/layout';
 import { Card, CardContent } from '@/components/ui/card';
-import { User, Palette, ChevronRight, Check, Database, FileSpreadsheet, PlusCircle, Bell } from 'lucide-react';
+import { User, Palette, ChevronRight, Check, Database, FileSpreadsheet, FileText, PlusCircle, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useThemeStore, type ThemeType } from '@/lib/stores/theme-store';
-import { StorageInfoCard, ExportDataCard, AutoOpenSettingCard, SettingAlertPriceCard } from './MoreTabComponent';
+import { StorageInfoCard, ExportDataCard, ExportTxtCard, AutoOpenSettingCard, SettingAlertPriceCard } from './MoreTabComponent';
 
 interface SettingsMenuItemProps {
   icon: React.ReactNode;
@@ -141,6 +141,7 @@ export function MoreTab() {
   const [showStorageInfo, setShowStorageInfo] = useState(false);
   const [showExportData, setShowExportData] = useState(false);
   const [showAutoOpenSetting, setShowAutoOpenSetting] = useState(false);
+  const [showExportTxt, setShowExportTxt] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
   const handleAccountClick = () => {
     // TODO: Navigate to account settings
@@ -161,6 +162,10 @@ export function MoreTab() {
 
   const handleAutoOpenClick = () => {
     setShowAutoOpenSetting(!showAutoOpenSetting);
+  };
+
+  const handleExportTxtClick = () => {
+    setShowExportTxt(!showExportTxt);
   };
 
   const handleAlertClick = () => {
@@ -219,6 +224,21 @@ export function MoreTab() {
             onClick={handleExportClick}
           />
         </div>
+
+        <div className="flex flex-col pt-3">
+          <SettingsMenuItem
+            icon={<FileText className="size-5" />}
+            title="ส่งออกข้อมูล TXT"
+            onClick={handleExportTxtClick}
+          />
+        </div>
+
+        {/* Export TXT Card */}
+        {showExportTxt && (
+          <div className="animate-slide-up mt-1">
+            <ExportTxtCard />
+          </div>
+        )}
 
         {/* Export Data Card */}
         {showExportData && (
